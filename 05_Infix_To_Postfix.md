@@ -1,136 +1,136 @@
-/**
- * @file infix_to_postfix.cpp
- * @brief Converts an Infix mathematical expression to Postfix notation (Reverse Polish Notation).
- * 
- * Objectives:
- * - Convert human-readable infix expressions (e.g., A + B * C) to postfix (e.g., A B C * +).
- * - Handle operator precedence and associativity (Left-to-Right vs Right-to-Left).
- * - Manage sub-expressions using opening and closing parentheses `()`.
- * 
- * Supported Operators:
- * - Addition (+), Subtraction (-) : Precedence 1 (Left-associative)
- * - Multiplication (*), Division (/) : Precedence 2 (Left-associative)
- * - Exponentiation ($) : Precedence 3 (Right-associative)
- * 
- * Time Complexity: O(n) where n is the length of the input expression.
- * Space Complexity: O(n) to store operators in the stack and build the output string.
- */
+// Objective: Convert an Infix expression (e.g., A+B*C) to Postfix notation (e.g., ABC*+) using Stack.
+// Operations: Operator precedence checking, Associativity handling, Parentheses management.
+// Time Complexity: O(n)
+// Space Complexity: O(n)
 
 #include <iostream>
 #include <stack>
 #include <string>
 
+using namespace std;
+
 // Function prototypes
-std::string infixToPostfix(const std::string &expression);
-bool hasHigherPrecedence(char op1, char op2);
-bool isOperator(char ch);
-bool isOperand(char ch);
-bool isRightAssociative(char op);
-int getOperatorWeight(char op);
+string InfixToPostfix(string expression);
+int HasHigherPrecedence(char operator1, char operator2);
+bool IsOperator(char C);
+bool IsOperand(char C);
 
-int main() {
-    std::string expression;
-    std::cout << "Enter Infix Expression: ";
-    std::getline(std::cin, expression);
-
-    std::string postfix = infixToPostfix(expression);
-    std::cout << "Postfix Output: " << postfix << "\n";
-
-    return 0;
+int main()
+{
+	string expression;
+	cout << "Enter Infix Expression: \n";
+	getline(cin, expression);
+	string postfix = InfixToPostfix(expression);
+	cout << "Output = " << postfix << "\n";
+	return 0;
 }
 
-// Converts an infix expression string to a postfix expression string
-std::string infixToPostfix(const std::string &expression) {
-    std::stack<char> s;
-    std::string postfix = "";
+// Convert Infix expression to Postfix
+string InfixToPostfix(string expression)
+{
+	stack<char> S;
+	string postfix = "";
 
-    for (char ch : expression) {
-        // Skip spaces and commas used as delimiters
-        if (ch == ' ' || ch == ',') {
-            continue;
-        }
+	for (unsigned int i = 0; i < expression.length(); i++) {
+		// Ignore spaces or commas
+		if (expression[i] == ' ' || expression[i] == ',') continue;
 
-        // If character is an operator (+, -, *, /, $)
-        if (isOperator(ch)) {
-            while (!s.empty() && s.top() != '(' && hasHigherPrecedence(s.top(), ch)) {
-                postfix += s.top();
-                s.pop();
-            }
-            s.push(ch);
-        }
-        // If character is an operand (letter or digit)
-        else if (isOperand(ch)) {
-            postfix += ch;
-        }
-        // If opening parenthesis, push onto the stack
-        else if (ch == '(') {
-            s.push(ch);
-        }
-        // If closing parenthesis, pop and append until matching '(' is found
-        else if (ch == ')') {
-            while (!s.empty() && s.top() != '(') {
-                postfix += s.top();
-                s.pop();
-            }
-            if (!s.empty()) {
-                s.pop(); // Remove '(' from stack
-            }
-        }
-    }
+		// If character is an operator (+, -, *, /, $)
+		else if (IsOperator(expression[i]))
+		{
+			while (!S.empty() && S.top() != '(' && HasHigherPrecedence(S.top(), expression[i]))
+			{
+				postfix += S.top();
+				S.pop();
+			}
+			S.push(expression[i]);
+		}
+		// If character is an operand (letter or digit)
+		else if (IsOperand(expression[i]))
+		{
+			postfix += expression[i];
+		}
+		// If opening bracket
+		else if (expression[i] == '(')
+		{
+			S.push(expression[i]);
+		}
+		// If closing bracket, pop until matching '('
+		else if (expression[i] == ')')
+		{
+			while (!S.empty() && S.top() != '(') {
+				postfix += S.top();
+				S.pop();
+			}
+			S.pop();
+		}
+	}
 
-    // Pop and append any remaining operators in the stack
-    while (!s.empty()) {
-        postfix += s.top();
-        s.pop();
-    }
+	// Pop remaining operators
+	while (!S.empty()) {
+		postfix += S.top();
+		S.pop();
+	}
 
-    return postfix;
+	return postfix;
 }
 
-// Checks if a character is an alphanumeric operand
-bool isOperand(char ch) {
-    if (ch >= '0' && ch <= '9') return true;
-    if (ch >= 'a' && ch <= 'z') return true;
-    if (ch >= 'A' && ch <= 'Z') return true;
-    return false;
+// Check if character is operand (letter or number)
+bool IsOperand(char C)
+{
+	if (C >= '0' && C <= '9') return true;
+	if (C >= 'a' && C <= 'z') return true;
+	if (C >= 'A' && C <= 'Z') return true;
+	return false;
 }
 
-// Checks if a character is a recognized mathematical operator
-bool isOperator(char ch) {
-    return (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '$');
+// Check if character is a valid operator
+bool IsOperator(char C)
+{
+	if (C == '+' || C == '-' || C == '*' || C == '/' || C == '$')
+		return true;
+
+	return false;
 }
 
-// Checks if the operator is right-associative (e.g., Exponentiation)
-bool isRightAssociative(char op) {
-    return op == '$';
+// Check right-associativity (e.g., exponent '$')
+int IsRightAssociative(char op)
+{
+	if (op == '$') return true;
+	return false;
 }
 
-// Returns numeric precedence weight of an operator
-int getOperatorWeight(char op) {
-    switch (op) {
-        case '+':
-        case '-':
-            return 1;
-        case '*':
-        case '/':
-            return 2;
-        case '$':
-            return 3;
-        default:
-            return -1;
-    }
+// Return operator precedence weight
+int GetOperatorWeight(char op)
+{
+	int weight = -1;
+	switch (op)
+	{
+	case '+':
+	case '-':
+		weight = 1;
+		break;
+	case '*':
+	case '/':
+		weight = 2;
+		break;
+	case '$':
+		weight = 3;
+		break;
+	}
+	return weight;
 }
 
-// Determines if op1 has higher or equal precedence compared to op2
-bool hasHigherPrecedence(char op1, char op2) {
-    int op1Weight = getOperatorWeight(op1);
-    int op2Weight = getOperatorWeight(op2);
+// Compare precedence between two operators
+int HasHigherPrecedence(char op1, char op2)
+{
+	int op1Weight = GetOperatorWeight(op1);
+	int op2Weight = GetOperatorWeight(op2);
 
-    if (op1Weight == op2Weight) {
-        // If equal precedence, give priority to the left-associative operator
-        if (isRightAssociative(op1)) return false;
-        return true;
-    }
-
-    return op1Weight > op2Weight;
+	if (op1Weight == op2Weight)
+	{
+		if (IsRightAssociative(op1)) return false;
+		else return true;
+	}
+	return op1Weight > op2Weight ? true : false;
 }
