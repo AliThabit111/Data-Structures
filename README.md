@@ -34,7 +34,18 @@ This repository contains clean, efficient, and well-commented C++ implementation
     ├── adjacency_matrix.cpp
     └── adjacency_list.cpp
 
+```
 
+## ⏱️ Complexity Reference
+
+| Data Structure | Access (Avg) | Search (Avg) | Insertion (Avg) | Deletion (Avg) | Space Complexity |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Dynamic Array** | O(1) | O(n) | O(n) | O(n) | O(n) |
+| **Stack** | O(n) | O(n) | O(1) | O(1) | O(n) |
+| **Queue** | O(n) | O(n) | O(1) | O(1) | O(n) |
+| **Singly Linked List** | O(n) | O(n) | O(1) | O(1) | O(n) |
+| **Binary Search Tree** | O(log n) | O(log n) | O(log n) | O(log n) | O(n) |
+| **Hash Table** | N/A | O(1) | O(1) | O(1) | O(n) |
 
 🛠️ Built With
 Language: C++ (C++17)
