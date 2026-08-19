@@ -1,134 +1,98 @@
-/**
- * @file stack_linked_list.cpp
- * @brief Implementation of a dynamic Stack using a Singly Linked List in C++.
- * 
- * Objectives:
- * - Implement standard LIFO (Last In, First Out) operations with dynamic memory.
- * - Eliminate capacity restrictions (no fixed MAX_SIZE).
- * - Proper heap allocation and deallocation to prevent memory leaks.
- * 
- * Time Complexities:
- * - push(newItem)  : O(1)
- * - pop()          : O(1)
- * - getTop()       : O(1)
- * - isEmpty()      : O(1)
- * - display()      : O(n)
- * 
- * Space Complexity: O(n) where n is the number of active nodes.
- */
 
-#include <iostream>
+ * Objective: Implementation of a dynamic Stack using a Singly Linked List with template support.
+ * Operations: push, pop, getTop, isEmpty, display
+ * Time Complexity: O(1) for push, pop, getTop | O(n) for display
+ * Space Complexity: O(n) dynamic memory
 
-template <class T>
+
+#include<iostream>
+using namespace std;
+
+template<class t>
 class Stack {
 private:
-    struct StackNode {
-        T item;
-        StackNode* next;
-    };
-
-    StackNode* topPtr;
+	struct StackNode {
+		t item;
+		StackNode* next;
+	};
+	StackNode *topPtr, *curPtr;
 
 public:
-    // Constructor: Initialize the stack as empty
-    Stack() : topPtr(nullptr) {}
+	// Constructor to initialize empty stack
+	Stack() {
+		topPtr = NULL;
+	}
 
-    // Destructor: Clean up all dynamically allocated nodes
-    ~Stack() {
-        while (!isEmpty()) {
-            pop();
-        }
-    }
+	// Check if stack is empty
+	bool isEmpty() {
+		return topPtr == NULL;
+	}
 
-    // Check whether the stack is empty
-    bool isEmpty() const {
-        return topPtr == nullptr;
-    }
+	// Insert element at the top
+	void push(t newItem) {
+		StackNode *newPtr = new StackNode;
+		if (newPtr == NULL)
+			cout << "Stack push cannot allocate memory\n";
+		else {
+			newPtr->item = newItem;
+			newPtr->next = topPtr;
+			topPtr = newPtr;
+		}
+	}
 
-    // Insert an item at the top of the stack
-    void push(T newItem) {
-        StackNode* newPtr = new (std::nothrow) StackNode;
-        if (newPtr == nullptr) {
-            std::cout << "Error: Memory allocation failed on push\n";
-            return;
-        }
-        newPtr->item = newItem;
-        newPtr->next = topPtr;
-        topPtr = newPtr;
-    }
+	// Remove top element
+	void pop() {
+		if (isEmpty())
+			cout << "Stack empty on pop\n";
+		else {
+			StackNode *temp = topPtr;
+			topPtr = topPtr->next;
+			temp->next = NULL;
+			delete temp;
+		}
+	}
 
-    // Remove the topmost element without returning it
-    void pop() {
-        if (isEmpty()) {
-            std::cout << "Error: Stack underflow on pop\n";
-            return;
-        }
-        StackNode* temp = topPtr;
-        topPtr = topPtr->next;
-        delete temp;
-    }
+	// Remove top element and return value by reference
+	void pop(t& stackTop) {
+		if (isEmpty())
+			cout << "Stack empty on pop\n";
+		else {
+			stackTop = topPtr->item;
+			StackNode *temp = topPtr;
+			topPtr = topPtr->next;
+			temp->next = NULL;
+			delete temp;
+		}
+	}
 
-    // Remove the topmost element and assign its value to the passed reference
-    void pop(T& stackTop) {
-        if (isEmpty()) {
-            std::cout << "Error: Stack underflow on pop\n";
-            return;
-        }
-        stackTop = topPtr->item;
-        StackNode* temp = topPtr;
-        topPtr = topPtr->next;
-        delete temp;
-    }
+	// Get the top element value
+	void getTop(t& stackTop) {
+		if (isEmpty())
+			cout << "stack empty on getTop\n";
+		else {
+			stackTop = topPtr->item;
+			cout << "\nTop Element of the stack is " << stackTop << endl;
+		}
+	}
 
-    // Retrieve the top element without removing it
-    void getTop(T& stackTop) const {
-        if (isEmpty()) {
-            std::cout << "Error: Stack is empty on getTop\n";
-            return;
-        }
-        stackTop = topPtr->item;
-        std::cout << "Top Element of the stack is: " << stackTop << "\n";
-    }
-
-    // Print all elements from top to bottom
-    void display() const {
-        if (isEmpty()) {
-            std::cout << "Stack is empty: [ ]\n";
-            return;
-        }
-
-        StackNode* curPtr = topPtr;
-        std::cout << "Items in the stack: [ ";
-        while (curPtr != nullptr) {
-            std::cout << curPtr->item << " ";
-            curPtr = curPtr->next;
-        }
-        std::cout << "]\n";
-    }
+	// Display all elements from top to bottom
+	void display() {
+		curPtr = topPtr;
+		cout << "\nItems in the stack : [ ";
+		while (curPtr != NULL) {
+			cout << curPtr->item << " ";
+			curPtr = curPtr->next;
+		}
+		cout << "]\n";
+	}
 };
 
 int main() {
-    Stack<int> s;
+	Stack<int> s;
+	s.push(10);
+	s.push(20);
+	s.push(30);
+	s.display();
 
-    // Push elements
-    s.push(10);
-    s.push(20);
-    s.push(30);
-
-    // Display stack
-    s.display();
-
-    // Check top
-    int topItem;
-    s.getTop(topItem);
-
-    // Pop element
-    int poppedItem;
-    s.pop(poppedItem);
-    std::cout << "Popped item: " << poppedItem << "\n";
-
-    // Display stack after pop
-    s.display();
-
-    return 0;
+	return 0;
 }
